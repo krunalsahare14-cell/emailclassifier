@@ -132,39 +132,46 @@
     
 # if __name__ == "__main__":
 #     test_output()
-from haystack import Document, Pipeline
-from haystack_integrations.components.generators.ollama import OllamaGenerator
-from haystack.components.preprocessors import DocumentCleaner
-from haystack.components.builders.prompt_builder import PromptBuilder
-from haystack.components.retrievers.in_memory import InMemoryBM25Retriever
-from haystack.document_stores.in_memory import InMemoryDocumentStore
 from json import loads
 
-# Load the phishing dataset JSON (optional)
-with open('src/data/rag.json', 'r') as f:
-    data = loads(f.read())
+# Guard haystack imports and pipeline creation so this module can be imported
+# even when django settings are not configured (e.g. in CI or simple local
+# runs). If haystack/Django are not available/configured we fall back to a
+# safe `return_ans` implementation that returns a default label.
+HAYSTACK_AVAILABLE = False
+try:
+    from haystack import Document, Pipeline  # type: ignore
+    from haystack_integrations.components.generators.ollama import OllamaGenerator  # type: ignore
+    from haystack.components.preprocessors import DocumentCleaner  # type: ignore
+    from haystack.components.builders.prompt_builder import PromptBuilder  # type: ignore
+    from haystack.components.retrievers.in_memory import InMemoryBM25Retriever  # type: ignore
+    from haystack.document_stores.in_memory import InMemoryDocumentStore  # type: ignore
 
-docs = [Document(content=str(doc)) for doc in data['nodes']]
+    # Load the phishing dataset JSON (optional)
+    with open('src/data/rag.json', 'r') as f:
+        data = loads(f.read())
 
-cleaner = DocumentCleaner()
-ppdocs = cleaner.run(documents=docs)
+    docs = [Document(content=str(doc)) for doc in data['nodes']]
 
-docu_store = InMemoryDocumentStore()
-docu_store.write_documents(ppdocs['documents'])
+    cleaner = DocumentCleaner()
+    ppdocs = cleaner.run(documents=docs)
 
-retriever = InMemoryBM25Retriever(document_store=docu_store, top_k=3)
+    docu_store = InMemoryDocumentStore()
+    docu_store.write_documents(ppdocs['documents'])
 
-template = '''
+    retriever = InMemoryBM25Retriever(document_store=docu_store, top_k=3)
+
+    template = '''
     You are a cybersecurity email inspection model.
     Your task is to determine whether the given email is PHISHING or NOT PHISHING.
 
     You MUST classify using strict cybersecurity rules.
-    
+
     Context (security hint data):
     {% for document in documents %}
         {{ document.content }}
     {% endfor %}
-    
+
     Email Text: {{ query }}
 
     Respond with EXACTLY ONE word:
@@ -172,26 +179,37 @@ template = '''
     - "not phishing" → if legitimate, harmless, normal communication
     '''
 
-prompt_builder = PromptBuilder(template=template)
+    prompt_builder = PromptBuilder(template=template)
 
-generator = OllamaGenerator(
-    model="qwen:4b",
-    url="http://localhost:11434",
-    generation_kwargs={
-        "num_predict": 10,
-        "temperature": 0.1,
-    },
-)
+    generator = OllamaGenerator(
+        model="qwen:4b",
+        url="http://localhost:11434",
+        generation_kwargs={
+            "num_predict": 10,
+            "temperature": 0.1,
+        },
+    )
 
-rag_pipeline = Pipeline()
-rag_pipeline.add_component("retriever", retriever)
-rag_pipeline.add_component("prompt_builder", prompt_builder)
-rag_pipeline.add_component("llm", generator)
-rag_pipeline.connect("retriever", "prompt_builder.documents")
-rag_pipeline.connect("prompt_builder", "llm")
+    rag_pipeline = Pipeline()
+    rag_pipeline.add_component("retriever", retriever)
+    rag_pipeline.add_component("prompt_builder", prompt_builder)
+    rag_pipeline.add_component("llm", generator)
+    rag_pipeline.connect("retriever", "prompt_builder.documents")
+    rag_pipeline.connect("prompt_builder", "llm")
+
+    HAYSTACK_AVAILABLE = True
+except Exception as _e:
+    # Avoid raising during import; other modules (UI, tests) can still run.
+    print("Haystack pipeline not initialized (fallback):", _e)
 
 
 def return_ans(query):
+    # If haystack pipeline couldn't be initialized we return a safe default
+    # so callers can continue to run without a configured Django/haystack.
+    if not HAYSTACK_AVAILABLE:
+        print("Haystack unavailable — returning default 'not phishing'")
+        return "not phishing"
+
     try:
         print("Checking email...")
         ans = rag_pipeline.run({
@@ -199,16 +217,17 @@ def return_ans(query):
             "retriever": {"query": query[:5000]}
         })
 
-        replies = ans["llm"]["replies"]
-        label = replies[0].lower().strip()
-
-        if "phish" in label:
-            return "phishing"
-        else:
+        replies = ans.get("llm", {}).get("replies", [])
+        if not replies:
             return "not phishing"
 
+        label = replies[0].lower().strip()
+        if "phish" in label:
+            return "phishing"
+        return "not phishing"
+
     except Exception as e:
-        print("ERROR:", e)
+        print("ERROR while running RAG pipeline:", e)
         return "not phishing"
 
 

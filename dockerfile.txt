@@ -1,0 +1,50 @@
+# Multi-stage Dockerfile for Python 3.12
+ARG PYTHON_VERSION=3.12
+FROM python:${PYTHON_VERSION}-slim AS builder
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    POETRY_VIRTUALENVS_CREATE=false
+
+WORKDIR /app
+
+# system deps for many python packages (adjust if you need more)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    gcc \
+    libffi-dev \
+    libssl-dev \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy packaging config early for cache
+COPY pyproject.toml poetry.lock* /app/
+
+# Install poetry & deps (if using Poetry)
+RUN pip install --upgrade pip \
+    && pip install poetry \
+    && if [ -f "poetry.lock" ]; then poetry install --no-dev --no-interaction --no-ansi; else echo "No poetry.lock found"; fi
+
+# Copy project
+COPY . /app
+
+# If you're using requirements.txt instead of poetry, uncomment:
+# RUN pip install --no-cache-dir -r requirements.txt
+
+# ---- runtime image ----
+FROM python:${PYTHON_VERSION}-slim
+WORKDIR /app
+
+# Copy installed packages from builder (works when poetry installs into system site-packages)
+COPY --from=builder /usr/local/lib/python${PYTHON_VERSION%.*}/site-packages /usr/local/lib/python${PYTHON_VERSION%.*}/site-packages
+COPY --from=builder /usr/local/bin /usr/local/bin
+
+COPY . /app
+
+# Create non-root user
+RUN useradd -m appuser || true
+USER appuser
+
+EXPOSE 8000
+
+# Default command: run the Streamlit demo. You can override on compose for worker processes.
+CMD ["streamlit", "run", "src/app.py", "--server.port", "8000", "--server.address", "0.0.0.0"]
