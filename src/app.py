@@ -69,7 +69,7 @@ if monitor and email_id and app_password:
                         
                         # Call the LLM helper and handle both dict-style
                         # responses (e.g. {"team": "..."}) and string-style
-                        # responses (e.g. "phishing" / "not phishing").
+                        # responses (e.g. "phishing" / "Low Risk (Benign)").
                         _ans = return_ans(f"From: {sender}\n\nSubject: {subject}\n\nBody: {body}")
                         if isinstance(_ans, dict):
                             team_or_label = _ans.get('team', 'unknown')

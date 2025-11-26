@@ -163,7 +163,7 @@ try:
 
     template = '''
     You are a cybersecurity email inspection model.
-    Your task is to determine whether the given email is PHISHING or NOT PHISHING.
+    Your task is to determine whether the given email is High Risk (Likely Phishing) or Low Risk (Benign).
 
     You MUST classify using strict cybersecurity rules.
 
@@ -176,7 +176,7 @@ try:
 
     Respond with EXACTLY ONE word:
     - "phishing" → if malicious intent, scam, password theft, impersonation, urgency trap, suspicious links, etc.
-    - "not phishing" → if legitimate, harmless, normal communication
+    - "Low Risk (Benign)" → if legitimate, harmless, normal communication
     '''
 
     prompt_builder = PromptBuilder(template=template)
@@ -207,8 +207,8 @@ def return_ans(query):
     # If haystack pipeline couldn't be initialized we return a safe default
     # so callers can continue to run without a configured Django/haystack.
     if not HAYSTACK_AVAILABLE:
-        print("Haystack unavailable — returning default 'not phishing'")
-        return "not phishing"
+        print("Haystack unavailable — returning default 'Low Risk (Benign)'")
+        return "Low Risk (Benign)"
 
     try:
         print("Checking email...")
@@ -219,16 +219,16 @@ def return_ans(query):
 
         replies = ans.get("llm", {}).get("replies", [])
         if not replies:
-            return "not phishing"
+            return "Low Risk (Benign)"
 
         label = replies[0].lower().strip()
         if "phish" in label:
-            return "probably phishing"
-        return "not phishing"
+            return "High Risk (Likely Phishing)"
+        return "Low Risk (Benign)"
 
     except Exception as e:
         print("ERROR while running RAG pipeline:", e)
-        return "not phishing"
+        return "Low Risk (Benign)"
 
 
 def test_output():
