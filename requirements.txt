@@ -32,3 +32,5 @@ pyproject_hooks==1.2.0
 pywin32-ctypes==0.2.3
 RapidFuzz==3.14.3
 requests==2.32.5
+setuptools>=60
+wheel
