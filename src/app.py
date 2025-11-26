@@ -76,7 +76,7 @@ if monitor and email_id and app_password:
                         else:
                             team_or_label = _ans
 
-                        st.markdown(f'''## Team to which this mail should be forwarded to:\n
+                        st.markdown(f'''## Classification for the mail above:\n
 ```
 {team_or_label}
 ```''')

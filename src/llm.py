@@ -223,7 +223,7 @@ def return_ans(query):
 
         label = replies[0].lower().strip()
         if "phish" in label:
-            return "phishing"
+            return "probably phishing"
         return "not phishing"
 
     except Exception as e:
