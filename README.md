@@ -1,62 +1,72 @@
-# 📩 AI Email Classifier & Auto-Routing System  
+📩 AI Email Phishing Detector & Security Email Filter
 
-A complete intelligent solution that automatically classifies incoming emails, identifies the appropriate department based on context, summarizes the content, and forwards messages without manual intervention.
+An intelligent security system that automatically scans incoming emails, detects phishing, evaluates risk, summarizes the message, and flags suspicious communications — reducing exposure to social-engineering threats.
 
----
+🔥 Overview
 
-## 🔥 Overview  
+Organizations receive thousands of emails daily — many of which attempt to trick employees into clicking malicious links or sharing credentials.
+This system leverages LLMs + contextual security scanning + attachment inspection to automatically detect phishing and malicious content.
 
-Organizations face high email traffic daily — manually scanning, understanding & routing each one is slow and error-prone.  
-This system solves that by using **LLMs + RAG + parallel processing workers**, making email management **faster, smarter and scalable**.
+The result: significantly increased email security, zero trust enforcement, faster threat detection.
 
----
+✨ Key Features
+Feature	Details
+🛡 Automated Phishing Classification	Identifies phishing/legitimate emails
+🧠 Threat Level Detection	Rates severity (low / medium / high / critical)
+🔍 RAG-based Threat Intelligence	Uses JSON threat pattern database
+📄 Summary Generation	Adds high-level description for security awareness
+📎 Attachment Inspection	Extracts & analyzes PDFs / docs / images
+🕵🏻‍♂️ Link Reputation Analysis	Searches for malicious URLs & patterns
+🏭 Distributed Task Queue	Celery + RabbitMQ for scalable processing
+🌍 Multilingual Support	Can detect phishing regardless of language
+🔁 Feedback Learning	System improves detection over time
+🏗 System Workflow
 
-### ✨ Key Features
+Email received from monitored inbox (IMAP)
 
-| Feature | Details |
-|--------|---------|
-| ⚡ Automated Email Classification | Uses LLMs to detect context and topic |
-| 🧠 Sentiment & Priority Detection | Marks emails as urgent/complaint/neutral |
-| 🔥 RAG-based Department Mapping | Routes to team using a hierarchical JSON database |
-| 📄 Summary Generation | Quick overview added at top of forwarded email |
-| 📎 Attachment Parsing | Extracts text from PDF/Docs for better classification |
-| 🏭 Distributed Task Queue | Celery + RabbitMQ for mass email processing |
-| 🌍 Multilingual Support | Uses translation pipeline for non-English mails |
-| 🔁 Feedback + Retraining | Improves accuracy continuously |
+Body text & attachments extracted
 
----
+Email task pushed to worker queue
 
-## 🏗 System Workflow
+Content is scanned for threat indicators
 
-1. Email received on monitored inbox (IMAP)
-2. Content + attachments extracted
-3. Task is pushed to distributed workers
-4. Text encrypted & sent to processing server
-5. LLM classifies + summarizes + detects sentiment
-6. Email reconstructed with summary + metadata
-7. Auto-forwarded via SMTP to correct team inbox
-8. Feedback used for improving future routing
+LLM determines: phishing or legitimate
 
----
+Summary + threat annotations added
 
-## 🧰 Tech Stack
+If phishing → moved to quarantine mailbox
 
-| Component | Technology |
-|---|---|
-| Language | **Python 3.8+** |
-| LLM Runtime | **Ollama** |
-| Task Queue | **Celery** |
-| Message Broker | **RabbitMQ** |
-| UI (Demo) | **Streamlit** |
-| Models Used | Qwen / LLaMA / Mixtral (configurable) |
+If legitimate → delivered normally
 
----
+Feedback stored for further model improvement
 
-## 🔧 Installation
+🧠 What phishing signals does it detect?
 
-### 1️⃣ Install RabbitMQ
+Fake identity impersonation (CEO / HR / Bank)
 
-```bash
+Password reset scams
+
+Fake invoice / payment fraud
+
+Urgent scare messaging (“ACTION REQUIRED”)
+
+Fraudulent links
+
+Credential harvesting
+
+Scam business proposals
+
+Malware-infested attachments
+
+🧰 Tech Stack
+Component	Technology
+Language	Python 3.8+
+LLM Runtime	Ollama
+Task Queue	Celery
+Broker	RabbitMQ
+UI Demo	Streamlit
+Models	Qwen / LLaMA / Mixtral (configurable)
+🔧 Installation
 sudo apt-get install rabbitmq-server
 curl -fsSL https://ollama.com/install.sh | sh
 ollama pull qwen3:4b
@@ -65,15 +75,16 @@ poetry env use python3
 poetry install
 streamlit run src/app.py
 
-📦 email-classifier
+📦 Project Structure
+email-classifier
  ┣ 📂 src
  ┃ ┣ 📂 data
- ┃ ┃ ┗ rag.json              # Department hierarchy data
+ ┃ ┃ ┗ rag.json              # Threat patterns + keyword data
  ┃ ┣ 📂 lib
  ┃ ┃ ┣ summarize.py          # Email summarizer
- ┃ ┃ ┣ forward.py            # Auto email forwarding logic
+ ┃ ┃ ┣ forward.py            # Mail quarantine/forwarding logic
  ┃ ┃ ┣ tasks.py              # Celery async worker functions
- ┃ ┃ ┗ attachments.py        # Attachment extraction & reading
- ┃ ┗ app.py                  # RAG demo streamlit UI
+ ┃ ┃ ┗ attachments.py        # Attachment scanning & text extraction
+ ┃ ┗ app.py                  # Streamlit UI for testing detections
  ┣ README.md
  ┗ requirements.txt
