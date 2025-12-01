@@ -1,90 +1,125 @@
-📩 AI Email Phishing Detector & Security Email Filter
+✉️🛡️ AI Email Phishing Detector & Security Email Filter
+An intelligent email-security system powered by LLMs, threat-intel scanning & automated workflows.
+🚀 Overview
 
-An intelligent security system that automatically scans incoming emails, detects phishing, evaluates risk, summarizes the message, and flags suspicious communications — reducing exposure to social-engineering threats.
+Modern organizations receive thousands of emails every day, many of which are phishing attempts, scam invoices, or social-engineering attacks.
 
-🔥 Overview
+This system combines:
 
-Organizations receive thousands of emails daily — many of which attempt to trick employees into clicking malicious links or sharing credentials.
-This system leverages LLMs + contextual security scanning + attachment inspection to automatically detect phishing and malicious content.
+LLM-based phishing detection
 
-The result: significantly increased email security, zero trust enforcement, faster threat detection.
+RAG-driven threat intelligence
+
+URL & attachment safety analysis
+
+Celery-powered distributed processing
+
+to deliver fast, reliable, automated email security.
+
+The result?
+⚡ Stronger zero-trust enforcement
+⚡ Faster threat detection
+⚡ Reduced human error risk
 
 ✨ Key Features
-Feature	Details
-🛡 Automated Phishing Classification	Identifies phishing/legitimate emails
-🧠 Threat Level Detection	Rates severity (low / medium / high / critical)
-🔍 RAG-based Threat Intelligence	Uses JSON threat pattern database
-📄 Summary Generation	Adds high-level description for security awareness
-📎 Attachment Inspection	Extracts & analyzes PDFs / docs / images
-🕵🏻‍♂️ Link Reputation Analysis	Searches for malicious URLs & patterns
-🏭 Distributed Task Queue	Celery + RabbitMQ for scalable processing
-🌍 Multilingual Support	Can detect phishing regardless of language
-🔁 Feedback Learning	System improves detection over time
-🏗 System Workflow
+Feature	Description
+🛡️ Automated Phishing Classification	Flags emails as legitimate or phishing
+🔥 Threat Level Detection	Rates severity: Low / Medium / High / Critical
+📚 RAG-Based Threat Intelligence	Uses JSON patterns to match known attack types
+🧠 LLM-Powered Summary	Generates human-readable security summary
+📎 Attachment Inspection	Extracts & analyzes PDF / DOCX / images
+🔗 Link Reputation Analysis	Detects malicious URLs or suspicious hostname patterns
+🏭 Distributed Task Queue	Celery + RabbitMQ for scalable async processing
+🌍 Multilingual Detection	Works across languages (English, Hindi, Spanish, etc.)
+🔁 Continuous Learning Loop	Improves accuracy with user feedback
+🏗️ System Workflow
+Incoming Email (IMAP)
+       ↓
+Extract Body + Attachments
+       ↓
+Push Task → Celery Worker Queue
+       ↓
+Threat Scan (content + links + files)
+       ↓
+LLM Reasoning → Phishing or Legit
+       ↓
+Add Summary + Threat Score
+       ↓
+[If phishing] → Move to Quarantine
+[If safe]     → Deliver to Inbox
+       ↓
+Store Feedback → Improve Model
 
-Email received from monitored inbox (IMAP)
+🧠 Phishing Signals Detected
 
-Body text & attachments extracted
-
-Email task pushed to worker queue
-
-Content is scanned for threat indicators
-
-LLM determines: phishing or legitimate
-
-Summary + threat annotations added
-
-If phishing → moved to quarantine mailbox
-
-If legitimate → delivered normally
-
-Feedback stored for further model improvement
-
-🧠 What phishing signals does it detect?
-
-Fake identity impersonation (CEO / HR / Bank)
-
-Password reset scams
-
-Fake invoice / payment fraud
-
-Urgent scare messaging (“ACTION REQUIRED”)
-
-Fraudulent links
-
-Credential harvesting
-
-Scam business proposals
-
-Malware-infested attachments
+✔ Fake identity impersonation (CEO, HR, Bank)
+✔ Password reset scams
+✔ Fake invoice/payment fraud
+✔ Urgent messages (“ACTION REQUIRED”, “LOGIN NOW”)
+✔ URL spoofing / malicious redirects
+✔ Credential harvesting landing pages
+✔ Advance-fee scams
+✔ Malware hidden in attachments
 
 🧰 Tech Stack
 Component	Technology
-Language	Python 3.8+
-LLM Runtime	Ollama
-Task Queue	Celery
-Broker	RabbitMQ
-UI Demo	Streamlit
-Models	Qwen / LLaMA / Mixtral (configurable)
+🐍 Language	Python 3.8+
+🤖 LLM Runtime	Ollama
+📦 Async Queue	Celery
+🐇 Message Broker	RabbitMQ
+🖥️ UI Demo	Streamlit
+🧩 Models	Qwen / LLaMA / Mixtral (configurable)
 🔧 Installation
+# Install RabbitMQ
 sudo apt-get install rabbitmq-server
+
+# Install Ollama
 curl -fsSL https://ollama.com/install.sh | sh
+
+# Pull model
 ollama pull qwen3:4b
+
+# Create venv
 python -m venv .venv
+
+# Setup poetry
 poetry env use python3
 poetry install
+
+# Run UI
 streamlit run src/app.py
 
 📦 Project Structure
-email-classifier
+email-classifier/
  ┣ 📂 src
  ┃ ┣ 📂 data
- ┃ ┃ ┗ rag.json              # Threat patterns + keyword data
+ ┃ ┃ ┗ rag.json              # Threat patterns + keyword DB
  ┃ ┣ 📂 lib
- ┃ ┃ ┣ summarize.py          # Email summarizer
- ┃ ┃ ┣ forward.py            # Mail quarantine/forwarding logic
- ┃ ┃ ┣ tasks.py              # Celery async worker functions
- ┃ ┃ ┗ attachments.py        # Attachment scanning & text extraction
- ┃ ┗ app.py                  # Streamlit UI for testing detections
+ ┃ ┃ ┣ summarize.py          # LLM email summarizer
+ ┃ ┃ ┣ forward.py            # Quarantine / forwarding logic
+ ┃ ┃ ┣ tasks.py              # Celery worker task handlers
+ ┃ ┃ ┗ attachments.py        # File text extraction + scanning
+ ┃ ┗ app.py                  # Streamlit UI
  ┣ README.md
  ┗ requirements.txt
+
+🧑‍💻 Future Enhancements
+
+🚨 Real-time Gmail & Outlook API integration
+
+🛑 Automatic URL sandboxing
+
+📊 Admin dashboard for security analytics
+
+🎯 Fine-tuned in-house phishing model
+
+🔐 DKIM/SPF/DMARC validation
+
+🤝 Contributions
+
+Pull requests and feature suggestions are welcome!
+If you'd like to improve the threat patterns, feel free to update rag.json.
+
+💬 Support
+
+If you need help setting up the system or modifying the detection logic, feel free to ask!
