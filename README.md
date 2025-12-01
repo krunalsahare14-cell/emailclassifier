@@ -93,15 +93,25 @@ ________________________________________
 ## 📦 Project Structure
 email-classifier/ 
  ┣ 📂 src 
+ 
  ┃ ┣ 📂 data 
+ 
  ┃ ┃ ┗ rag.json              # Threat patterns + keyword DB 
+ 
  ┃ ┣ 📂 lib 
+ 
  ┃ ┃ ┣ summarize.py          # LLM email summarizer 
+ 
  ┃ ┃ ┣ forward.py            # Quarantine / forwarding logic 
+ 
  ┃ ┃ ┣ tasks.py              # Celery worker task handlers 
+ 
  ┃ ┃ ┗ attachments.py        # File text extraction + scanning 
+ 
  ┃ ┗ app.py                  # Streamlit UI 
+ 
  ┣ README.md 
+ 
  ┗ requirements.txt
 ________________________________________
 
