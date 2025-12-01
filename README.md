@@ -1,7 +1,8 @@
-✉️🛡️ AI Email Phishing Detector & Security Email Filter
+#✉️🛡️ AI Email Phishing Detector & Security Email Filter
 An intelligent email-security system powered by LLMs, threat-intel scanning & automated workflows.
 ________________________________________
-🚀 Overview
+
+##🚀 Overview
 Modern organizations receive thousands of emails every day, many of which are phishing attempts, scam invoices, or social-engineering attacks.
 This system combines:
 •	LLM-based phishing detection
@@ -14,7 +15,8 @@ The result?
 ⚡ Faster threat detection
 ⚡ Reduced human error risk
 ________________________________________
-✨ Key Features
+
+##✨ Key Features
 Feature	Description
 🛡️ Automated Phishing Classification	Flags emails as legitimate or phishing
 🔥 Threat Level Detection	Rates severity: Low / Medium / High / Critical
@@ -26,7 +28,8 @@ Feature	Description
 🌍 Multilingual Detection	Works across languages (English, Hindi, Spanish, etc.)
 🔁 Continuous Learning Loop	Improves accuracy with user feedback
 ________________________________________
-🏗️ System Workflow
+
+##🏗️ System Workflow
 Incoming Email (IMAP)
        ↓
 Extract Body + Attachments
@@ -44,7 +47,8 @@ Add Summary + Threat Score
        ↓
 Store Feedback → Improve Model
 ________________________________________
-🧠 Phishing Signals Detected
+
+##🧠 Phishing Signals Detected
 ✔ Fake identity impersonation (CEO, HR, Bank)
 ✔ Password reset scams
 ✔ Fake invoice/payment fraud
@@ -54,7 +58,8 @@ ________________________________________
 ✔ Advance-fee scams
 ✔ Malware hidden in attachments
 ________________________________________
-🧰 Tech Stack
+
+##🧰 Tech Stack
 Component	Technology
 🐍 Language	Python 3.8+
 🤖 LLM Runtime	Ollama
@@ -63,27 +68,29 @@ Component	Technology
 🖥️ UI Demo	Streamlit
 🧩 Models	Qwen / LLaMA / Mixtral (configurable)
 ________________________________________
-🔧 Installation
-# Install RabbitMQ
+
+##🔧 Installation
+### Install RabbitMQ
 sudo apt-get install rabbitmq-server
 
-# Install Ollama
+### Install Ollama
 curl -fsSL https://ollama.com/install.sh | sh
 
-# Pull model
+### Pull model
 ollama pull qwen3:4b
 
-# Create venv
+### Create venv
 python -m venv .venv
 
-# Setup poetry
+### Setup poetry
 poetry env use python3
 poetry install
 
-# Run UI
+### Run UI
 streamlit run src/app.py
 ________________________________________
-📦 Project Structure
+
+##📦 Project Structure
 email-classifier/
  ┣ 📂 src
  ┃ ┣ 📂 data
@@ -97,16 +104,19 @@ email-classifier/
  ┣ README.md
  ┗ requirements.txt
 ________________________________________
-🧑‍💻 Future Enhancements
+
+##🧑‍💻 Future Enhancements
 •	🚨 Real-time Gmail & Outlook API integration
 •	🛑 Automatic URL sandboxing
 •	📊 Admin dashboard for security analytics
 •	🎯 Fine-tuned in-house phishing model
 •	🔐 DKIM/SPF/DMARC validation
 ________________________________________
-🤝 Contributions
+
+##🤝 Contributions
 Pull requests and feature suggestions are welcome!
 If you'd like to improve the threat patterns, feel free to update rag.json.
 ________________________________________
-💬 Support
+
+##💬 Support
 If you need help setting up the system or modifying the detection logic, feel free to ask!
