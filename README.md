@@ -1,6 +1,12 @@
 # ✉️🛡️ AI Email Phishing Detector & Security Email Filter
 ### _An intelligent email-security system powered by LLMs, threat-intel scanning & automated workflows._
 
+## 🌐 Live Deployment
+
+🔗 **Live App:**  
+https://emailclassifier-9txcvnacelac9mijvyyyrt.streamlit.app
+
+
 ## 🚀 Overview
 Modern organizations receive thousands of emails daily, many containing phishing, malware, or credential‑harvesting attempts.
 
