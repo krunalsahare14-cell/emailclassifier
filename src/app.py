@@ -20,6 +20,7 @@ st.set_page_config(
 
 st.write("# Welcome to Email Classifier! 👋")
 
+# Taking in sample email-id to check phishing mails 
 email_id = st.text_input("Enter your Email ID (Gmail) which you want to monitor", placeholder="johndoe@example.com")
 app_password = st.text_input("Enter your App Password (Gmail) to access the emails through IMAP", placeholder="yourpassword")
 
