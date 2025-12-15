@@ -67,3 +67,18 @@ ________________________________________
 
 ## 💬 Support
 If you need help setting up the system or modifying the detection logic, feel free to ask!
+________________________________________
+## Deployment
+
+This application is deployed using **Streamlit Cloud**.
+
+### How it works
+- Monitors Gmail inbox using IMAP
+- Extracts unread emails
+- Applies a phishing detection classifier
+- Displays classification results in real time
+
+### Security Note
+This app uses **Gmail App Passwords** only.
+Credentials are not stored and are used only for the active session.
+
